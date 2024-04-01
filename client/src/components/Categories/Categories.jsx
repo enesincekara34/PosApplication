@@ -7,6 +7,7 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // categoryCreateModal
   const [isModalOpen2, setIsModalOpen2] = useState(false); // categoryEditModal
+  const [editingRow, setEditingRow] = useState({}); // categoryUpdate
   const [form] = Form.useForm(); // Form nesnesini kullan
 
   const fetchCategories = async () => {
@@ -15,7 +16,7 @@ const Categories = () => {
         "http://localhost:9000/api/getAllCategory"
       );
       setCategories(response.data.categories);
-      //console.log(response.data);
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -49,15 +50,37 @@ const Categories = () => {
     }
   }
 
+  const onFinishCategoryUpdate = async(values) =>{
+    try {
+      const response = await axios.put("http://localhost:9000/api/updateCategory",{
+        ...values,
+        categoryId:editingRow._id
+      })
+      message.success("Düzenleme Başarılı")
+      fetchCategories()
+      setIsModalOpen2(false)
+      form.resetFields()
+      setEditingRow({})
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
   const columns = [
     {
-      title: "Category Başlığı",
+      title: "Category Title",
       dataIndex: "title",
       render: (text, record) => {
-        console.log(text);
-        return (
-          <p>{text}</p>
-        )
+        if (record._id === editingRow._id) {
+          return (
+            <Form.Item name="title">
+              <Input defaultValue={record.title} />
+            </Form.Item>
+          );
+        } else {
+          return <p>{record.title}</p>;
+        }
       },
     },
     {
@@ -68,13 +91,19 @@ const Categories = () => {
         // console.log("enes",record);
         return (
           <div>
-            <Button>Ekle</Button>
+            <Button htmlType="submit">Ekle</Button>
             <Button
             type="primary"
             danger
             onClick={() => onFinishCategoryDelete(record._id)}
             >Sil</Button>
-            <Button>Güncelle</Button>
+            <Button
+              type="primary"
+              onClick={() => setEditingRow({ ...record })}
+              
+            >
+              Düzenle
+            </Button>
           </div>
         );
       },
@@ -141,7 +170,7 @@ const Categories = () => {
         onCancel={() => setIsModalOpen2(false)}
         footer={false}
       >
-        <Form>
+        <Form onFinish={onFinishCategoryUpdate} form={form}>
           <Table bordered dataSource={categories} columns={columns} />
         </Form>
       </Modal>

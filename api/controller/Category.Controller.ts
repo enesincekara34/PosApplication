@@ -23,7 +23,7 @@ class CategoryController {
 
     public static async updateCategory(req:Request,res:Response){
         try {
-            const updatedCategory = await Category.findByIdAndUpdate({_id:req.body._id},req.body);
+            const updatedCategory = await Category.findByIdAndUpdate({_id:req.body.categoryId},req.body);
             res.status(200).json({"Msg":"Kayıt Başarıyla Güncellendi",updatedCategory})
         } catch (error) {
             res.status(500).json(error)
