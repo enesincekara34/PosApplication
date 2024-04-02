@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button} from "antd";
 import React from "react";
 import {
   ClearOutlined,
@@ -6,7 +6,7 @@ import {
   MinusCircleOutlined,
 } from "@ant-design/icons";
 import { useDispatch,useSelector } from "react-redux";
-import { deleteProduct } from "../../redux/cartSlice";
+import { addCartProduct, decrese, deleteCartProduct, deleteSingleProduct} from "../../redux/cartSlice";
 
 const CartTotals = () => {
   const { cartItems, total } = useSelector((state) => state.cart);
@@ -23,6 +23,7 @@ const CartTotals = () => {
           <li className="cart-item flex justify-between" key={index}>
             <div className="flex items-center">
               <img
+                onClick={() => dispatch(deleteSingleProduct(item))}
                 src={item.img}
                 alt=""
                 className="w-16 h-16 object-cover"
@@ -34,13 +35,14 @@ const CartTotals = () => {
             </div>
             <div className="flex items-center">
               <Button
+              onClick={()=>dispatch(addCartProduct({...item}))}
                 size="small"
                 className=" bg-blue-300 w-full flex items-center justify-center !rounded-full"
                 icon={<PlusCircleOutlined />}
               />
               <span>{item.quantity}</span>
               <Button
-                onClick={()=>dispatch(deleteProduct({...item,quantity:0}))}
+                onClick={()=>dispatch(decrese(item))}
                 size="small"
                 className=" bg-blue-300 w-full flex items-center justify-center !rounded-full"
                 icon={<MinusCircleOutlined />}
@@ -53,7 +55,7 @@ const CartTotals = () => {
         <div className="border-t border-b">
           <div className="flex justify-between p-2">
             <b>Ara Toplam</b>
-            <span>99₺</span>
+            <span>{total}</span>
           </div>
           <div className="flex justify-between p-2">
             <b>KDV %8</b>
@@ -71,6 +73,7 @@ const CartTotals = () => {
             Sipariş Oluştur
           </Button>
           <Button
+            onClick={()=>dispatch(deleteCartProduct())}
             size="large"
             className="bg-red-500 w-full mt-2"
             icon={<ClearOutlined />}
