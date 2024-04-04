@@ -1,10 +1,6 @@
 import { Button, Modal } from "antd";
 
 const PrintBill = ({ isModalOpen, setIsModalOpen }) => {
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
-
   return (
     <Modal
       title="Fatura Yazdır"
